@@ -15,6 +15,8 @@ app.get('/test', (req, res) => {
   )
 })
 
+
+
  //time
 app.get('/time', (req, res) => {
 const today = new Date();
@@ -23,3 +25,27 @@ const time = today.getHours() + ":" + today.getSeconds();
     {status:200, message:time}
   )
 })
+//     //hello
+
+app.get('/hello/:ID', (req, res) => {
+  data = req.params;
+    res.send(
+      {status:200, message:"Hello, "+ data.ID}
+    )
+  })
+//      //search
+     app.get('/search', (req, res) => {
+      search=req.query.s
+        if (!search){
+          res.send(
+          {status:500, error:true, message:"you have to provide a search"}
+          )
+        }else{
+          res.send(
+            {status:200, message:"ok", data:search}
+          )
+        }
+    })
+app.listen(port,()=>{
+  console.log(`Server Listening on port ${port}`)
+  });
