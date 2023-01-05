@@ -1,7 +1,7 @@
 const express = require('express');
 
 const app = express();
-const port = 3001;
+const port = 3000;
 const movies = [
   { title: 'Jaws', year: 1975, rating: 8, id:12},
   { title: 'Avatar', year: 2009, rating: 7.8, id:34 },
@@ -74,6 +74,18 @@ app.get('/hello/:ID', (req, res) => {
    app.get('/movies/delete', (req, res) => {
     res.send('delete movie')
    })
+   app.get("/movies/read/by-date", (req, res) => {
+    res.send({ status: 200, data: movies.sort((a, b) => a.year - b.year) });
+  });
+  app.get("/movies/read/by-rating", (req, res) => {
+    res.send({ status: 200, data: movies.sort((a, b) => b.rating - a.rating) });
+  });
+  app.get("/movies/read/by-title", (req, res) => {
+    res.send({
+      status: 200,
+      data: movies.sort((a, b) => a.title.localeCompare(b.title)),
+    });
+  });
   
 app.listen(port,()=>{
   console.log(`Server Listening on port ${port}`)
