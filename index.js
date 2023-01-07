@@ -1,7 +1,7 @@
 const express = require('express');
 
 const app = express();
-const port = 3002;
+const port = 3004;
 const movies = [
   { title: 'Jaws', year: 1975, rating: 8, id:12},
   { title: 'Avatar', year: 2009, rating: 7.8, id:34 },
@@ -53,10 +53,46 @@ app.get('/hello/:ID', (req, res) => {
         }
     })
       //create
-      app.get('/movies/add', (req, res) => {
-        res.send('add movie')
-
-      })
+      app.get("/movies/add", (req, res) => {
+        // Get the title, year, and rating from the query string
+        let { title, year, rating } = req.query;
+      
+        // Check if the title and year are present
+        if (!title || !year) {
+          return res.status(404).send({
+            status: 404,
+            error: true,
+            message: "You cannot create a movie without providing a title or a year",
+          });
+        }
+      
+        // Check if the year is 4 digits and is a number
+        if (year.length !== 4 || isNaN(year)) {
+          return res.status(404).send({
+            status: 404,
+            error: true,
+            message: "You cannot create a movie without providing a valid year",
+          });
+        }
+      
+        // Set the default rating if one is not provided
+        if (!rating || isNaN(rating)) {
+          rating = 4;
+        }
+      
+        // Create the new movie object
+        const newMovie = {
+          title,
+          year,
+          rating,
+        };
+      
+        // Add the new movie to the movies array
+        movies.push(newMovie);
+      
+        // Return the updated list of movies
+        res.send(movies);
+      });
          //read
    app.get('/movies/get', (req, res) => {
     res.send(
