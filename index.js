@@ -1,7 +1,7 @@
 const express = require('express');
 
 const app = express();
-const port = 3002;
+const port = 3000;
 const movies = [
   { title: 'Jaws', year: 1975, rating: 8, id:12},
   { title: 'Avatar', year: 2009, rating: 7.8, id:34 },
@@ -53,7 +53,7 @@ app.get('/hello/:ID', (req, res) => {
         }
     })
       //create
-      app.get("/movies/add", (req, res) => {
+      app.post("/movies/add", (req, res) => {
         // Get the title, year, and rating from the query string
         let { title, year, rating } = req.query;
       
@@ -103,26 +103,49 @@ app.get('/hello/:ID', (req, res) => {
   )
 })
  //update
- app.put('/movies/update/:id', (req, res)=> {
-  var ttle = req.body.title;
-  var rate = req.body.rating;
-  let idd = req.params.id;
-           if (ttle !== ''){
-           movies[idd-1].title = ttle;
-           }
-          if (rate !== ''){ 
-              movies[idd-1].rating = parseInt(rate);
-           }   
-  res.send(movies); 
-});
+ app.put('/movies/update/ID', (req, res) => {
+    
+  data = req.params;
+  newTitle = req.query.title
+  newYear = Number(req.query.year)
+  newRating = Number(req.query.rating)
+  let index
+  let exist = false;
+  for(var i = 0; i < movies.length; i++){
+    if(data.ID == movies[i].id){
+      exist = true;
+      index= i;
+    }
+  }
+  if (exist){
+    if(newTitle) movies[index].title = newTitle
+    if(newYear) movies[index].year = newYear
+    if (newRating) movies[index].rating = newRating
+    res.send({status:200, data:movies})
+  }else {
+    res.send({status:404, error:true, message:'the movie <ID> does not exist'})
+  }
+  
+  })
    //delete
-   app.delete('/movies/delete/:id', (req, res)=> {
-    let iddl = req.params.id-1;
-    const mov = movies[iddl];
-    movies.splice(iddl, 1);
-    if(!mov)res.status(404).send('the movie id does not exist');
-    res.send(movies);
-});
+   app.delete('/movies/delete/:ID', (req, res) => {
+    data = req.params;
+    let index
+    let exist = false;
+    for(var i = 0; i < movies.length; i++){
+      if(data.ID == movies[i].id){
+        exist = true;
+        index= i;
+      }
+    }
+    if (exist){
+      movies.splice(index,1);
+      res.send({status:200, data:movies})
+    }else {
+      res.send({status:404, error:true, message:'the movie <ID> does not exist'})
+    }
+      
+   })
    //read-by-date
    app.get("/movies/read/by-date", (req, res) => {
     res.send({ status: 200, data: movies.sort((a, b) => a.year - b.year) });
